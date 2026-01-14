@@ -10,25 +10,21 @@ tf = 5.0;
 tol = 1e-12;
 
 % Integrate forward in time
-while t < tf
+while t <= tf
     x = rk4(t, x, dt);
-
-    % disp('time:')
-    % disp(t)
-    % disp('theta [rad]:')
-    % disp(x(1))
-    % disp('thetadot [rad]:')
-    % disp(x(2))
-
     t = t + dt; 
+
+    disp('')
+    disp('time:')
+    disp(t)
+    disp('theta [rad]:')
+    disp(x(1))
+    disp('thetadot [rad]:')
+    disp(x(2))
+    disp('')
+
 end
 
-disp('time:')
-disp(t-dt)
-disp('theta [rad]:')
-disp(x(1))
-disp('thetadot [rad]:')
-disp(x(2))
 
 %% Functions
 function state = rk4(t0, x0, dt)
