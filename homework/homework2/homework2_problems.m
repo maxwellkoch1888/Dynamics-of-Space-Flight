@@ -11,10 +11,10 @@ R = 6378;
 % v = [3.1;-6.2;4.9];
 % vmag = norm(v);
 % h = cross(r,v); 
-% e = cross(v,h)/mu - r/norm(r);
-% emag = norm(e) ;
+% e = cross(v,h)/mu - r/norm(r)
+% emag = norm(e) 
 % 
-% ta = acos(dot(r,e) / (rmag*emag));
+% ta = acos(dot(r,e) / (rmag*emag))
 
 
 % %problem 7 
@@ -28,9 +28,9 @@ R = 6378;
 % h = sqrt(ra * mu *(1-e));
 % energy = -1/2 * mu^2/h^2 * (1-e^2) 
 % 
-% rd = 10000;
+% rd = 10000 + R;
 % ta = acos(1/e*(h^2/(mu*rd) - 1))
-% r2 = h^2/ mu * 1/(1+e*cos(-ta))
+% r2 = h^2/ mu * 1/(1+e*cos(-ta));
 
 
 % %problem 8 
@@ -71,8 +71,8 @@ R = 6378;
 % e = (-B + sqrt(B^2-4*A*C))/(2*A)
 % % sol2 = (-B - sqrt(B^2-4*A*C))/(2*A)
 % 
-% rp = a*(e-1) 
-% vp = sqrt((energy + mu/r) * 2)
+% rp = a*(e-1) - R
+% vp = sqrt(2*(energy + mu/(rp + R)))
 
 
 % % problem 12
@@ -97,8 +97,6 @@ R = 6378;
 % 
 % rd = hmag^2/mu * 1/(1+emag*cos(ta));
 % rd_P = [rd*cos(ta); rd*sin(ta); 0];
-% vd = sqrt((energy + mu/rd) * 2);
-% vd_P = [vd*cos(ta); vd*sin(ta); 0]; 
 % 
 % phat = e/emag; 
 % what = h/hmag; 
@@ -107,4 +105,4 @@ R = 6378;
 % rot_I_to_P = [phat'; qhat'; what']; 
 % 
 % rd_I = inv(rot_I_to_P) * rd_P
-% vd_I = inv(rot_I_to_P) * vd_P
+% vd_I = mu/hmag*(-sin(ta) * phat + qhat *(emag+cos(ta)))
