@@ -42,6 +42,14 @@ R = 6378;
 % 
 % e = (ra-rp)/(ra+rp)
 
+% % problem 9 
+% a = 149.6e6;              % km
+% mu = 1.3271244e11;        % km^3/s^2
+% 
+% v_circ = sqrt(mu / a);
+% v_esc  = sqrt(2 * mu / a);
+% 
+% delta_v = v_esc - v_circ
 
 
 % % problem 10 
