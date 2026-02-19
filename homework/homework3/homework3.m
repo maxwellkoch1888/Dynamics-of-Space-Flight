@@ -6,6 +6,7 @@ R = 6378;
 mu = 398600;
 
 %% Problems
+
 % % Problem 1
 % % find ta, distance and speed when ta increases by 75 deg
 % r = [3440; -1750; 7758];
@@ -170,9 +171,9 @@ mu = 398600;
 % 
 % vp = sqrt(2*mu/rp);
 % h = rp*vp
-% ta = acos((h^2/(mu*rd) - 1)) / e
+% ta = acos((h^2/(mu*rd) - 1))
 % Mp = 0.5 * tan(ta/2) + 1/6 * (tan(ta/2))^3
-% t = Mp / mu^2 * h^3
+% t = h^3/mu^2 * Mp
 
 
 % % Problem 10
@@ -183,14 +184,13 @@ mu = 398600;
 % 
 % h = vp * rp;
 % e = h^2/(mu * rp) - 1
-% Mh = mu^2/h^3 * (e^2 - 1)^(3/2) * t
+% energy = vp^2/2 - mu/rp;
 % 
-% syms x
-% fun = e*sqrt(e^2-1)*sin(x) / (1+ e*cos(x)) - log((sqrt(e+1) + sqrt(e-1) * tan(x/2)) / (sqrt(e+1) - sqrt(e-1) * tan(x/2))) - Mh; 
-% ta = newtons_method(fun, x, 120, 1e-12)
-% 
-% F = log((sqrt(e+1) + sqrt(e-1) * tan(ta/2)) / (sqrt(e+1) - sqrt(e-1) * tan(ta/2)))
-
+% Mh = mu^2/h^3*(e^2-1)^(3/2) * t
+% F0 = asinh(Mh/e);
+% F = fsolve(@(F) e*sinh(F) - F - Mh, F0)
+% ta = 2*atan(sqrt((e+1)/(e-1))*tanh(F/2))
+% r = h^2/mu /(1+e*cos(ta))
 
 %% Functions
 function root = newtons_method(f_sym, sym_var, x0, tol)
