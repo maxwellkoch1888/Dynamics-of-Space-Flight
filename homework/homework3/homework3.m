@@ -170,7 +170,7 @@ mu = 398600;
 % 
 % vp = sqrt(2*mu/rp);
 % h = rp*vp
-% ta = acos((h^2/(mu*rd) - 1) / e)
+% ta = acos((h^2/(mu*rd) - 1)) / e
 % Mp = 0.5 * tan(ta/2) + 1/6 * (tan(ta/2))^3
 % t = Mp / mu^2 * h^3
 
@@ -182,7 +182,7 @@ mu = 398600;
 % t = 24*60*60; 
 % 
 % h = vp * rp;
-% e = 1 - h^2/(mu * rp)
+% e = h^2/(mu * rp) - 1
 % Mh = mu^2/h^3 * (e^2 - 1)^(3/2) * t
 % 
 % syms x
