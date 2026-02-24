@@ -24,14 +24,14 @@ mu = 398600;
 % ta1 = ta + 75*pi/180;
 % r1 = hmag^2/mu * 1/(1 + emag*cos(ta1));
 % r1mag = norm(r1)
-% v1mag = sqrt(2 * (E + mu/rmag))
+% v1mag = sqrt(2 * (E + mu/r1))
 
 
 % % Problem 2
 % syms x 
 % fun = x^2 - 5*x + 4.15 - 10*exp(sin(x));
-% root1 = newtons_method(fun, x, 0, 1e-12)
-% root2 = newtons_method(fun, x, 5, 1e-12)
+% root1 = newtons_method(fun, x, 5, 1e-12)
+% root2 = newtons_method(fun, x, 6.5, 1e-12)
 % root3 = newtons_method(fun, x, 10, 1e-12)
 
 
@@ -109,14 +109,14 @@ mu = 398600;
 % 
 % ta2 = 2*atan2(sin(E2/2) * sqrt(1+emag), cos(E2/2) * sqrt(1-emag))
 % 
-% phat = e/emag; 
+% phat = e/emag;
 % what = h/hmag;
-% qhat = cross(what, phat); 
+% qhat = cross(what, phat);
 % rot = [phat'; qhat'; what'];
 % 
 % r2mag = hmag^2/mu * 1/(1+emag*cos(ta2));
 % r2 = inv(rot)* [r2mag*cos(ta2); r2mag*sin(ta2); 0]
-% v2mag = mu/hmag * (-sin(ta2)*phat + e+cos(ta2)*qhat)
+% v2mag = mu/hmag * (-sin(ta2)*phat + (emag+cos(ta2))*qhat)
 
 
 % % Problem 7
@@ -139,7 +139,7 @@ mu = 398600;
 % % Problem 8
 % rp = 7500;
 % ra = 16000; 
-% ta = 75 * pi / 180; 
+% ta = 70 * pi / 180; 
 % 
 % e = (ra-rp)/(ra+rp);
 % a = (ra + rp)/2; 
@@ -148,7 +148,7 @@ mu = 398600;
 % M = E - e*sin(E); % mean anomaly
 % t = M*T / (2*pi);
 % 
-% t1 = t + 45*60; 
+% t1 = t + 45*60;
 % M1 = t1*2*pi / T;
 % 
 % syms x 
@@ -158,7 +158,7 @@ mu = 398600;
 % else 
 %     x0 = M1 - e/2;
 % end
-% E2 = newtons_method(fun, x, x0, 1e-12);
+% E2 = newtons_method(fun, x, M1, 1e-12);
 % 
 % ta2 = 2*atan2(sin(E2/2) * sqrt(1+e), cos(E2/2) * sqrt(1-e))
 
