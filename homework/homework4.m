@@ -114,60 +114,60 @@ Te = 365.26;
 % r2mag = norm(r2); 
 % 
 % dec2 = asin(r2(3)/r2mag)
-% RAAN2 = atan2(r2(2),r2(1))
+% RAAN2 = wrapTo2Pi(atan2(r2(2),r2(1)))
 
 %% Problem 4 
-z1 = 478; 
-r1mag = R + z1; 
-v1 = [0;0;10]; 
-v1mag = norm(v1);
-RAAN = 315 * pi / 180; 
-dec = -65 * pi / 180; 
-
-r1 = r1mag * [cos(dec)*cos(RAAN); cos(dec)*sin(RAAN); sin(dec)]; 
-
-vr1 = dot(r1,v1)/r1mag;
-
-alpha = 2/r1mag - v1mag^2/mu;
-
-t = 33*60;
-
-% Initial guess for chi
-chi = sqrt(mu)*abs(alpha)*t;
-
-for k = 1:100
-    z = alpha*chi^2;
-
-    if z > 0
-        C = (1 - cos(sqrt(z)))/z;
-        S = (sqrt(z) - sin(sqrt(z)))/(sqrt(z)^3);
-    elseif z < 0
-        C = (cosh(sqrt(-z)) - 1)/(-z);
-        S = (sinh(sqrt(-z)) - sqrt(-z))/(sqrt(-z)^3);
-    else
-        C = 1/2;
-        S = 1/6;
-    end
-
-    F = r1mag*vr1/sqrt(mu)*chi^2*C + ...
-        (1 - alpha*r1mag)*chi^3*S + ...
-        r1mag*chi - sqrt(mu)*t;
-
-    dF = r1mag*vr1/sqrt(mu)*chi*(1 - alpha*chi^2*S) + ...
-         (1 - alpha*r1mag)*chi^2*C + r1mag;
-
-    chi = chi - F/dF;
-end
-
-% f and g
-f = 1 - chi^2/r1mag * C;
-g = t - chi^3/sqrt(mu) * S;
-
-r2 = f*r1 + g*v1;
-r2mag = norm(r2); 
-
-dec2 = asin(r2(3)/r2mag)
-RAAN2 = atan2(r2(2),r2(1))
+% z1 = 478; 
+% r1mag = R + z1; 
+% v1 = [0;0;10]; 
+% v1mag = norm(v1);
+% RAAN = 315 * pi / 180; 
+% dec = -65 * pi / 180; 
+% 
+% r1 = r1mag * [cos(dec)*cos(RAAN); cos(dec)*sin(RAAN); sin(dec)]; 
+% 
+% vr1 = dot(r1,v1)/r1mag;
+% 
+% alpha = 2/r1mag - v1mag^2/mu;
+% 
+% t = 33*60;
+% 
+% % Initial guess for chi
+% chi = sqrt(mu)*abs(alpha)*t;
+% 
+% for k = 1:100
+%     z = alpha*chi^2;
+% 
+%     if z > 0
+%         C = (1 - cos(sqrt(z)))/z;
+%         S = (sqrt(z) - sin(sqrt(z)))/(sqrt(z)^3);
+%     elseif z < 0
+%         C = (cosh(sqrt(-z)) - 1)/(-z);
+%         S = (sinh(sqrt(-z)) - sqrt(-z))/(sqrt(-z)^3);
+%     else
+%         C = 1/2;
+%         S = 1/6;
+%     end
+% 
+%     F = r1mag*vr1/sqrt(mu)*chi^2*C + ...
+%         (1 - alpha*r1mag)*chi^3*S + ...
+%         r1mag*chi - sqrt(mu)*t;
+% 
+%     dF = r1mag*vr1/sqrt(mu)*chi*(1 - alpha*chi^2*S) + ...
+%          (1 - alpha*r1mag)*chi^2*C + r1mag;
+% 
+%     chi = chi - F/dF;
+% end
+% 
+% % f and g
+% f = 1 - chi^2/r1mag * C;
+% g = t - chi^3/sqrt(mu) * S;
+% 
+% r2 = f*r1 + g*v1;
+% r2mag = norm(r2); 
+% 
+% dec2 = asin(r2(3)/r2mag)
+% RAAN2 = wrapTo2Pi(atan2(r2(2),r2(1)))
 
 
 %% Problem 5
@@ -276,6 +276,96 @@ RAAN2 = atan2(r2(2),r2(1))
 % v_I = Q_P2I * v_p 
 
 %% Problem 9 
+% % Given orbit (altitudes in km)
+% hp = 200;
+% ha = 650;
+% rp = R + hp;
+% ra = R + ha;
+% 
+% % orbital elements
+% a = (rp + ra)/2;
+% e = (ra - rp)/(ra + rp);
+% p = a*(1 - e^2);
+% 
+% % mean motion
+% n = sqrt(mu/a^3);
+% 
+% % RAAN precession
+% omega_sun = 2*pi / (365.2422 * 86400);
+% 
+% % Step 5: Solve for inclination
+% inc = acos(-(2/3) * (omega_sun / J2) * (p^2 / R^2) * (1/n))
+
+%% Problem 10 
+% e = 0.11;
+% a = 7000; 
+% inc = 40*pi/180; 
+% RAAN0 = 5*pi/180; 
+% arg0 = 25*pi/180; 
+% 
+% % Step 1: Compute p and n
+% p = a*(1 - e^2);
+% n = sqrt(mu/a^3);
+% 
+% % Step 2: J2 rates
+% RAAN_dot = -3/2 * J2 * (R^2 / p^2) * n * cos(inc);
+% arg_dot  =  3/4 * J2 * (R^2 / p^2) * n * (5*cos(inc)^2 - 1);
+% 
+% % Step 3: Propagate 5 days
+% t = 5 * 24 * 3600;   % seconds
+% 
+% RAAN = wrapTo2Pi(RAAN0 + RAAN_dot * t)
+% arg  = arg0  + arg_dot  * t
+
+%% Problem 11
+% % Given
+% e = 0.11;
+% a = 7000; 
+% inc = 40*pi/180; 
+% RAAN0 = 5*pi/180; 
+% arg0 = 25*pi/180; 
+% ta0 = 15*pi/180; 
+% 
+% % Step 1: p and n
+% p = a*(1 - e^2);
+% n = sqrt(mu/a^3);
+% 
+% % Step 2: J2 rates
+% RAAN_dot = -3/2 * J2 * (R^2 / p^2) * n * cos(inc);
+% arg_dot  =  3/4 * J2 * (R^2 / p^2) * n * (5*cos(inc)^2 - 1);
+% 
+% % Step 3: Time
+% t = 5 * 24 * 3600;
+% 
+% % Step 4: Update RAAN and argument
+% RAAN = wrapTo2Pi(RAAN0 + RAAN_dot * t);
+% arg  = wrapTo2Pi(arg0  + arg_dot  * t);
+% 
+% % Step 5: Propagate anomaly
+% E0 = 2*atan( sqrt((1-e)/(1+e)) * tan(ta0/2) );
+% M0 = E0 - e*sin(E0);
+% M = M0 + n*t;
+% 
+% syms E_sym
+% f = E_sym - e*sin(E_sym) - M;
+% E = newtons_method(f, E_sym, M, 1e-10);
+% 
+% ta = 2*atan( sqrt((1+e)/(1-e)) * tan(E/2) );
+% ta = mod(ta, 2*pi);
+% 
+% % Step 6: r and v in perifocal
+% r_p = (p/(1 + e*cos(ta))) * [cos(ta); sin(ta); 0];
+% v_p = sqrt(mu/p) * [-sin(ta); e+cos(ta); 0];
+% 
+% % Step 7: Rotation matrices
+% R3_W = [cos(RAAN) sin(RAAN) 0; -sin(RAAN) cos(RAAN) 0; 0 0 1];
+% R1_i = [1 0 0; 0 cos(inc) sin(inc); 0 -sin(inc) cos(inc)];
+% R3_w = [cos(arg) sin(arg) 0; -sin(arg) cos(arg) 0; 0 0 1];
+% Q = (R3_W * R1_i * R3_w)';
+% 
+% r_I = Q * r_p
+% v_I = Q * v_p
+
 
 %% functions
 function root = newtons_method(f_sym, sym_var, x0, tol)
