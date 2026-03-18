@@ -30,3 +30,18 @@ if e(3) >= 0
 else 
     wp = 2*pi - acos(dot(N/norm(N), e/emag)); 
 end 
+
+
+% Orbital elements to R, V
+rP = hmag^2/mu /(1+emag*cos(ta)) * [cos(ta); sin(ta); 0];
+vP = mu/hmag * [-sin(ta); emag+cos(ta); 0];
+R3W = [cos(RAAN), sin(RAAN), 0; -sin(RAAN), cos(RAAN), 0; 0, 0, 1];
+R1i = [1,0,0; 0, cos(inc), sin(inc); 0, -sin(inc), cos(inc)];
+R3w = [cos(wp), sin(wp), 0; -sin(wp), cos(wp), 0; 0, 0, 1];
+
+QG2P = R3w * R1i * R3W; 
+QP2G = QG2P'; 
+rG = QP2G * rP
+vG = QP2G * vP
+r - rG
+v - vG
