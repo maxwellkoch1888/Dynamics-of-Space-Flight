@@ -191,117 +191,136 @@ Te = 365.26;
 % 2*norm(dv)
 
 %% Problem 11
-% Initial orbital elements
-ai = Re + 500; 
-ei = 0.1; 
-ii = 10*pi/180; 
-Wi = 20*pi/180; 
-wi = 30*pi/180; 
-tai = 15*pi/180; 
+% % Initial orbital elements (orbit 1)
+% a1 = Re + 500; 
+% e1 = 0.1; 
+% i = 10*pi/180; 
+% W = 20*pi/180; 
+% w = 30*pi/180; 
+% taA = 15*pi/180; 
+% h1 = sqrt(mu * a1 * (1 - e1^2));
+% 
+% % Desired orbital elements (orbit 3)
+% a3 = Re + 5000; 
+% e3 = 0.3; 
+% taB = 158*pi/180; 
+% h3 = sqrt(mu * a3 * (1 - e3^2));
+% 
+% % Calculate positions/velocities for points A and B
+% rA = h1^2/mu /(1 + e1*cos(taA)); 
+% vA1 = mu/h1 * [-sin(taA); e1+cos(taA); 0]; 
+% rB = h3^2/mu /(1 + e3*cos(taB)); 
+% vB3 = mu/h3 * [-sin(taB); e3+cos(taB); 0]; 
+% 
+% % Calculate transfer elements and velocity
+% e2 = (rA-rB)/(rB*cos(taB) - rA*cos(taA));
+% h2 = sqrt(mu*rA*rB) * sqrt((cos(taA) - cos(taB)) / (rA*cos(taA) - rB*cos(taB)));
+% vA2 = mu/h2 * [-sin(taA); e2+cos(taA); 0];
+% vB2 = mu/h2 * [-sin(taB); e2+cos(taB); 0];
+% 
+% % Rotation matrix 2
+% R3w = [cos(w), sin(w), 0; -sin(w), cos(w), 0; 0, 0, 1]; 
+% R3W = [cos(W), sin(W), 0; -sin(W), cos(W), 0; 0, 0, 1]; 
+% R1i = [1, 0, 0; 0, cos(i), sin(i); 0, -sin(i), cos(i)]; 
+% 
+% Q_g2p = R3w * R1i * R3W;
+% Q_p2g = inv(Q_g2p);
+% 
+% dv1_p = vA2 - vA1;
+% dv2_p = vB3 - vB2;
+% dv1_g = Q_p2g * dv1_p 
+% dv2_g = Q_p2g * dv2_p
 
-% Desired orbital elements 
-ad = Re + 5000; 
-ed = 0.3; 
-id = 10*pi/180; 
-Wd = 20*pi/180; 
-wd = 30*pi/180; 
-tad = 15*pi/180; 
 
 %% Problem 12
-ra1 = 16000; 
-rp1 = 8500; 
-ra2 = 21000; 
-rp2 = 7000; 
-eta = 28*pi/180; 
-
-e1 = (ra1-rp1)/(ra1+rp1);
-e2 = (ra2-rp2)/(ra2+rp2);
-
-h1 = sqrt(rp1*mu*(1+e1));
-h2 = sqrt(rp2*mu*(1+e2));
-
-% parameters from 6.13
-a = e1*h2^2 - e2*h1^2*cos(eta);
-b = -e2*h1^2*sin(eta);
-c = h2^2 - h1^2;
-
-% 6.14
-phi = atan(b/a);
-term = acos(c/a * cos(phi)); 
-if term > phi
-    ta1 = phi + acos(c/a * cos(phi));
-else 
-    ta1 = phi - acos(c/a * cos(phi));    
-end 
-
-r = h1^2/mu /(1+e1 * cos(ta1));
-v1_perp = h1/r;
-v1_r = mu/h1 * e1 * sin(ta1); 
-y1 = atan(v1_r/ v1_perp); 
-v1 = sqrt(v1_r^2 + v1_perp^2);
-
-v2_perp = h2/r; 
-v2_r = mu/h2 * e2 * sin(ta1 - eta); 
-y2 = atan(v2_r/ v2_perp); 
-v2 = sqrt(v2_r^2 + v2_perp^2);
-
-dv = sqrt(v1^2 + v2^2 - 2*v1*v2*cos(y2-y1))
+% ra1 = 16000; 
+% rp1 = 8500; 
+% ra2 = 21000; 
+% rp2 = 7000; 
+% eta = 28*pi/180; 
+% 
+% e1 = (ra1-rp1)/(ra1+rp1);
+% e2 = (ra2-rp2)/(ra2+rp2);
+% 
+% h1 = sqrt(rp1*mu*(1+e1));
+% h2 = sqrt(rp2*mu*(1+e2));
+% 
+% % parameters from 6.13
+% a = e1*h2^2 - e2*h1^2*cos(eta);
+% b = -e2*h1^2*sin(eta);
+% c = h2^2 - h1^2;
+% 
+% % 6.14
+% phi = atan(b/a);
+% term = acos(c/a * cos(phi)); 
+% if term > phi
+%     ta1 = phi + acos(c/a * cos(phi));
+% else 
+%     ta1 = phi - acos(c/a * cos(phi));    
+% end 
+% 
+% r = h1^2/mu /(1+e1 * cos(ta1));
+% v1_perp = h1/r;
+% v1_r = mu/h1 * e1 * sin(ta1); 
+% y1 = atan(v1_r/ v1_perp); 
+% v1 = sqrt(v1_r^2 + v1_perp^2);
+% 
+% v2_perp = h2/r; 
+% v2_r = mu/h2 * e2 * sin(ta1 - eta); 
+% y2 = atan(v2_r/ v2_perp); 
+% v2 = sqrt(v2_r^2 + v2_perp^2);
+% 
+% dv = sqrt(v1^2 + v2^2 - 2*v1*v2*cos(y2-y1))
 
 %% Problem 13
-% a = Re + 500; 
-% e = 0.25; 
-% i = 20*pi/180; 
-% W = 15*pi/180; 
-% w = 30*pi/180; 
-% 
-% % True anomaly at apogee
-% ta = pi;
-% 
-% % Step 1: Get r and v in perifocal frame
-% p = a*(1 - e^2);
-% 
-% r_pf = (p/(1 + e*cos(ta))) * [cos(ta); sin(ta); 0];
-% v_pf = sqrt(mu/p) * [-sin(ta); e + cos(ta); 0];
-% 
-% % rotation matrix
-% R3_W = [cos(W) -sin(W) 0;
-%         sin(W)  cos(W) 0;
-%         0       0      1];
-% 
-% R1_i = [1 0 0;
-%         0 cos(i) -sin(i);
-%         0 sin(i)  cos(i)];
-% 
-% R3_w = [cos(w) -sin(w) 0;
-%         sin(w)  cos(w) 0;
-%         0       0      1];
-% 
-% Q_g2p = R3_W * R1_i * R3_w;
-% 
-% r = Q_g2p * r_pf;
-% v = Q_g2p * v_pf;
-% 
-% % Angular momentum direction
-% h = cross(r,v);
-% h_hat = h / norm(h);
-% 
-% % delta v 
-% dv_mag = 0.05; 
-% v_new = v + dv_mag * h_hat;
-% 
-% % Compute new orbital elements
-% 
-% h_new = cross(r, v_new);
-% n = cross([0;0;1], h_new);
-% e_vec = (cross(v_new, h_new)/mu) - r/norm(r);
-% e_new = norm(e_vec);
-% 
-% energy = norm(v_new)^2/2 - mu/norm(r);
-% a_new = -mu/(2*energy);
-% 
-% i_new = acos(h_new(3)/norm(h_new))
-% W_new = atan2(n(2), n(1))
-% w_new = atan2(dot(cross(n,e_vec),h_new)/norm(h_new), dot(n,e_vec))
+a = Re + 500; 
+e = 0.25; 
+i = 20*pi/180; 
+W = 15*pi/180; 
+w = 30*pi/180; 
+
+% True anomaly at apogee
+ta = pi;
+
+% Step 1: Get r and v in perifocal frame
+p = a*(1 - e^2);
+
+r_pf = (p/(1 + e*cos(ta))) * [cos(ta); sin(ta); 0];
+v_pf = sqrt(mu/p) * [-sin(ta); e + cos(ta); 0];
+
+% rotation matrix
+R3_W = [cos(W) -sin(W) 0;sin(W)  cos(W) 0;0       0      1];
+
+R1_i = [1 0 0;0 cos(i) -sin(i);0 sin(i)  cos(i)];
+
+R3_w = [cos(w) -sin(w) 0;sin(w)  cos(w) 0;0       0      1];
+
+Q_g2p = R3_W * R1_i * R3_w;
+
+r = Q_g2p * r_pf;
+v = Q_g2p * v_pf;
+
+% Angular momentum direction
+h = cross(r,v);
+h_hat = h / norm(h);
+
+% delta v 
+dv_mag = 0.05; 
+v_new = v + dv_mag * h_hat;
+
+% Compute new orbital elements
+
+h_new = cross(r, v_new);
+n = cross([0;0;1], h_new);
+e_vec = (cross(v_new, h_new)/mu) - r/norm(r);
+e_new = norm(e_vec);
+
+energy = norm(v_new)^2/2 - mu/norm(r);
+a_new = -mu/(2*energy);
+
+i_new = acos(h_new(3)/norm(h_new))
+W_new = atan2(n(2), n(1))
+w_new = atan2(dot(cross(n,e_vec),h_new)/norm(h_new), dot(n,e_vec))
 
 
 %% Functions
