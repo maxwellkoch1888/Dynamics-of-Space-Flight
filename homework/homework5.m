@@ -247,15 +247,62 @@ v2 = sqrt(v2_r^2 + v2_perp^2);
 
 dv = sqrt(v1^2 + v2^2 - 2*v1*v2*cos(y2-y1))
 
-%% Problem 13 
-a = Re + 500; 
-e = 0.25; 
-i = 25*pi/180; 
-W = 15*pi/180; 
-w = 30*pi/180; 
+%% Problem 13
+% a = Re + 500; 
+% e = 0.25; 
+% i = 20*pi/180; 
+% W = 15*pi/180; 
+% w = 30*pi/180; 
+% 
+% % True anomaly at apogee
+% ta = pi;
+% 
+% % Step 1: Get r and v in perifocal frame
+% p = a*(1 - e^2);
+% 
+% r_pf = (p/(1 + e*cos(ta))) * [cos(ta); sin(ta); 0];
+% v_pf = sqrt(mu/p) * [-sin(ta); e + cos(ta); 0];
+% 
+% % rotation matrix
+% R3_W = [cos(W) -sin(W) 0;
+%         sin(W)  cos(W) 0;
+%         0       0      1];
+% 
+% R1_i = [1 0 0;
+%         0 cos(i) -sin(i);
+%         0 sin(i)  cos(i)];
+% 
+% R3_w = [cos(w) -sin(w) 0;
+%         sin(w)  cos(w) 0;
+%         0       0      1];
+% 
+% Q_g2p = R3_W * R1_i * R3_w;
+% 
+% r = Q_g2p * r_pf;
+% v = Q_g2p * v_pf;
+% 
+% % Angular momentum direction
+% h = cross(r,v);
+% h_hat = h / norm(h);
+% 
+% % delta v 
+% dv_mag = 0.05; 
+% v_new = v + dv_mag * h_hat;
+% 
+% % Compute new orbital elements
+% 
+% h_new = cross(r, v_new);
+% n = cross([0;0;1], h_new);
+% e_vec = (cross(v_new, h_new)/mu) - r/norm(r);
+% e_new = norm(e_vec);
+% 
+% energy = norm(v_new)^2/2 - mu/norm(r);
+% a_new = -mu/(2*energy);
+% 
+% i_new = acos(h_new(3)/norm(h_new))
+% W_new = atan2(n(2), n(1))
+% w_new = atan2(dot(cross(n,e_vec),h_new)/norm(h_new), dot(n,e_vec))
 
-% Apogee maneuver
-dv = [0;0.05; 0i]; 
 
 %% Functions
 function [r,v] = oe2rv(a, e, ta, i, W, w)
