@@ -187,7 +187,13 @@ Te = 365.26;
 % 
 % RAAN = acos(N(1)/norm(N))
 % arg = acos(dot(N,e)/(norm(N)*emag))
-% ta = acos(dot(e,r1)/(emag*norm(r1)))
+% % check velocity
+% vr = dot(v1, r1/norm(r1));
+% if vr>0
+%     ta = acos(dot(e,r1)/(emag*norm(r1)))
+% else
+%     ta = -acos(dot(e,r1)/(emag*norm(r1)))
+% end 
 
 %% Problem 6 
 % r1 = [0;0; -13000]; 
@@ -204,8 +210,19 @@ Te = 365.26;
 % N = cross([0;0;1], h);
 % 
 % RAAN = acos(N(1)/norm(N))
-% arg = acos(dot(N,e)/(norm(N)*emag))
-% ta = acos(dot(e,r1)/(emag*norm(r1)))
+% 
+% if e(3) > 0
+%     arg = acos(dot(N,e)/(norm(N)*emag))
+% else 
+%     arg = 2*pi - acos(dot(N,e)/(norm(N)*emag))
+% end 
+% 
+% vr = dot(v1, r1/norm(r1));
+% if vr>0
+%     ta = acos(dot(e,r1)/(emag*norm(r1)))
+% else
+%     ta = -acos(dot(e,r1)/(emag*norm(r1)))
+% end 
 
 %% Problem 7
 % e = 1.4; 
@@ -213,15 +230,14 @@ Te = 365.26;
 % rp = R + zp; 
 % inc = 30*pi/180; 
 % RAAN = 120*pi/180; 
-% arg = 112*pi*180;
-% t = 60; 
+% arg = 112*pi/180;
+% t = 3600; 
 % 
 % % Step 1: calculate r_p
-% 
 % h = sqrt(rp*mu*(1+e));
 % 
 % % calculate ta 
-% Mh = mu^2/h^3 *(e^2-1)^(3/2)*t;
+% Mh = t/(h^3/(mu^2 *(e^2-1)^(3/2)));
 % syms x 
 % fun = e*sinh(x) - x - Mh; 
 % F = newtons_method(fun, x, Mh, 1e-12);
@@ -234,11 +250,11 @@ Te = 365.26;
 % 
 % % Step 3: calculate Q_P2I, Q_I2P = R3(arg) * R1(inc) * R3(RAAN) 
 % 
-% R3_o = [cos(arg), sin(arg), 0; -sin(arg), cos(arg), 0; 0, 0, 1]; 
-% R1_i = [1, 0, 0; 0, cos(inc), sin(inc); 0, -sin(inc), cos(inc)]; 
-% R3_O = [cos(RAAN), sin(RAAN), 0; -sin(RAAN), cos(RAAN), 0; 0, 0, 1]; 
-% Q_I2P = R3_o * R1_i * R3_O; 
-% Q_P2I = inv(Q_I2P); 
+% R3_o = [cos(arg), sin(arg), 0; -sin(arg), cos(arg), 0; 0, 0, 1] ;
+% R1_i = [1, 0, 0; 0, cos(inc), sin(inc); 0, -sin(inc), cos(inc)];
+% R3_O = [cos(RAAN), sin(RAAN), 0; -sin(RAAN), cos(RAAN), 0; 0, 0, 1];
+% Q_I2P = R3_o * R1_i * R3_O;
+% Q_P2I = Q_I2P'
 % 
 % % Step 4: rotate r_p and v_p 
 % 
@@ -257,10 +273,10 @@ Te = 365.26;
 % % Step 1: Calculate r_p 
 % r_p = a*(1-e^2)/(1+e*cos(ta)) * [cos(ta); sin(ta); 0]; 
 % rp = a*(1-e^2)/(1+e); 
-% h = sqrt(rp*mu*(1+e*cos(ta)));
+% h = sqrt(a*(1-e^2));
 % 
 % % Step 2: calculate v_p 
-% v_p = mu/h * [-sin(ta); e+cos(ta); 0]; 
+% v_p = mu/h * [-sin(ta); e+cos(ta); 0];
 % 
 % % Step 3: calculate Q_P2I, Q_I2P = R3(arg) * R1(inc) * R3(RAAN) 
 % 
@@ -318,53 +334,53 @@ Te = 365.26;
 % arg  = arg0  + arg_dot  * t
 
 %% Problem 11
-% % Given
-% e = 0.11;
-% a = 7000; 
-% inc = 40*pi/180; 
-% RAAN0 = 5*pi/180; 
-% arg0 = 25*pi/180; 
-% ta0 = 15*pi/180; 
-% 
-% % Step 1: p and n
-% p = a*(1 - e^2);
-% n = sqrt(mu/a^3);
-% 
-% % Step 2: J2 rates
-% RAAN_dot = -3/2 * J2 * (R^2 / p^2) * n * cos(inc);
-% arg_dot  =  3/4 * J2 * (R^2 / p^2) * n * (5*cos(inc)^2 - 1);
-% 
-% % Step 3: Time
-% t = 5 * 24 * 3600;
-% 
-% % Step 4: Update RAAN and argument
-% RAAN = wrapTo2Pi(RAAN0 + RAAN_dot * t);
-% arg  = wrapTo2Pi(arg0  + arg_dot  * t);
-% 
-% % Step 5: Propagate anomaly
-% E0 = 2*atan( sqrt((1-e)/(1+e)) * tan(ta0/2) );
-% M0 = E0 - e*sin(E0);
-% M = M0 + n*t;
-% 
-% syms E_sym
-% f = E_sym - e*sin(E_sym) - M;
-% E = newtons_method(f, E_sym, M, 1e-10);
-% 
-% ta = 2*atan( sqrt((1+e)/(1-e)) * tan(E/2) );
-% ta = mod(ta, 2*pi);
-% 
-% % Step 6: r and v in perifocal
-% r_p = (p/(1 + e*cos(ta))) * [cos(ta); sin(ta); 0];
-% v_p = sqrt(mu/p) * [-sin(ta); e+cos(ta); 0];
-% 
-% % Step 7: Rotation matrices
-% R3_W = [cos(RAAN) sin(RAAN) 0; -sin(RAAN) cos(RAAN) 0; 0 0 1];
-% R1_i = [1 0 0; 0 cos(inc) sin(inc); 0 -sin(inc) cos(inc)];
-% R3_w = [cos(arg) sin(arg) 0; -sin(arg) cos(arg) 0; 0 0 1];
-% Q = (R3_W * R1_i * R3_w)';
-% 
-% r_I = Q * r_p
-% v_I = Q * v_p
+% Given
+e = 0.11;
+a = 7000; 
+inc = 40*pi/180; 
+RAAN0 = 5*pi/180; 
+arg0 = 25*pi/180; 
+ta0 = 15*pi/180; 
+
+% p and n
+p = a*(1 - e^2);
+n = sqrt(mu/a^3);
+
+% J2 rates
+RAAN_dot = -3/2 * J2 * (R^2 / p^2) * n * cos(inc);
+arg_dot  =  3/4 * J2 * (R^2 / p^2) * n * (5*cos(inc)^2 - 1);
+
+% Time
+t = 5 * 24 * 3600;
+
+% Update RAAN and argument
+RAAN = wrapTo2Pi(RAAN0 + RAAN_dot * t);
+arg  = wrapTo2Pi(arg0  + arg_dot  * t);
+
+% Propagate anomaly
+E0 = 2*atan( sqrt((1-e)/(1+e)) * tan(ta0/2) );
+M0 = E0 - e*sin(E0);
+M = M0 + n*t;
+
+syms E_sym
+f = E_sym - e*sin(E_sym) - M;
+E = newtons_method(f, E_sym, M, 1e-10);
+
+ta = 2*atan( sqrt((1+e)/(1-e)) * tan(E/2) );
+ta = mod(ta, 2*pi);
+
+% r and v in perifocal
+r_p = (p/(1 + e*cos(ta))) * [cos(ta); sin(ta); 0];
+v_p = sqrt(mu/p) * [-sin(ta); e+cos(ta); 0];
+
+% Step 7: Rotation matrices
+R3_W = [cos(RAAN) sin(RAAN) 0; -sin(RAAN) cos(RAAN) 0; 0 0 1];
+R1_i = [1 0 0; 0 cos(inc) sin(inc); 0 -sin(inc) cos(inc)];
+R3_w = [cos(arg) sin(arg) 0; -sin(arg) cos(arg) 0; 0 0 1];
+Q = (R3_w * R1_i * R3_W)';
+
+r_I = Q * r_p
+v_I = Q * v_p
 
 
 %% functions
