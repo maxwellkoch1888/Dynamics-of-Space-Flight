@@ -105,18 +105,18 @@ Te = 365.26;
 % dv2_g = Q_p2g_2 * dv2_p
 
 %% Problem 7 and 8 
-% % Original orbit elements
+% Original orbit elements
 % ai = Re + 5500; 
 % ei = 0.25; 
 % tai = 0; 
 % i = 25*pi/180; 
-% W = 25*pi/180; 
+% W = 35*pi/180; 
 % w = 45*pi/180; 
 % 
-% % Perigee radius
+% Perigee radius
 % rp = ai * (1-ei^2)/(1+ei*cos(tai)); 
 % 
-% % Phase maneuver elements
+% Phase maneuver elements
 % T = 3*3600; 
 % at = (T*sqrt(mu)/(2*pi))^(2/3);
 % ra = 2*at - rp; 
@@ -125,6 +125,8 @@ Te = 365.26;
 % 
 % [r1i, v1i] = oe2rv(ai, ei, tai, i, W, w); 
 % [r1t, v1t] = oe2rv(at, et, tai ,i, W, w);
+% v1t 
+% v1i
 % dv = v1t -v1i
 
 %% Problem 9 
@@ -202,18 +204,18 @@ Te = 365.26;
 % 
 % % Desired orbital elements (orbit 3)
 % a3 = Re + 5000; 
-% e3 = 0.3; 
+% e3 = 0.3;
 % taB = 158*pi/180; 
 % h3 = sqrt(mu * a3 * (1 - e3^2));
 % 
 % % Calculate positions/velocities for points A and B
-% rA = h1^2/mu /(1 + e1*cos(taA)); 
+% rA = h1^2/mu /(1 + e1*cos(taA))
 % vA1 = mu/h1 * [-sin(taA); e1+cos(taA); 0]; 
-% rB = h3^2/mu /(1 + e3*cos(taB)); 
+% rB = h3^2/mu /(1 + e3*cos(taB))
 % vB3 = mu/h3 * [-sin(taB); e3+cos(taB); 0]; 
 % 
 % % Calculate transfer elements and velocity
-% e2 = (rA-rB)/(rB*cos(taB) - rA*cos(taA));
+% e2 = (rA-rB)/(rB*cos(taB) - rA*cos(taA))
 % h2 = sqrt(mu*rA*rB) * sqrt((cos(taA) - cos(taB)) / (rA*cos(taA) - rB*cos(taB)));
 % vA2 = mu/h2 * [-sin(taA); e2+cos(taA); 0];
 % vB2 = mu/h2 * [-sin(taB); e2+cos(taB); 0];
@@ -248,16 +250,15 @@ Te = 365.26;
 % % parameters from 6.13
 % a = e1*h2^2 - e2*h1^2*cos(eta);
 % b = -e2*h1^2*sin(eta);
-% c = h2^2 - h1^2;
+% c = h1^2-h2^2;
 % 
 % % 6.14
-% phi = atan(b/a);
-% term = acos(c/a * cos(phi)); 
-% if term > phi
-%     ta1 = phi + acos(c/a * cos(phi));
-% else 
-%     ta1 = phi - acos(c/a * cos(phi));    
-% end 
+% phi = atan2(b,a);
+% term = acos(c/a * cos(phi));
+% 
+% ta11 = phi + acos(c/a * cos(phi));
+% ta12 = phi - acos(c/a * cos(phi));    
+% ta1 = min(ta11, ta12);
 % 
 % r = h1^2/mu /(1+e1 * cos(ta1));
 % v1_perp = h1/r;
@@ -275,7 +276,7 @@ Te = 365.26;
 %% Problem 13
 a = Re + 500; 
 e = 0.25; 
-i = 20*pi/180; 
+i = 20*pi/180;
 W = 15*pi/180; 
 w = 30*pi/180; 
 
@@ -285,31 +286,28 @@ ta = pi;
 % Step 1: Get r and v in perifocal frame
 p = a*(1 - e^2);
 
-r_pf = (p/(1 + e*cos(ta))) * [cos(ta); sin(ta); 0];
-v_pf = sqrt(mu/p) * [-sin(ta); e + cos(ta); 0];
+r_pf = (p/(1 + e*cos(ta))) * [cos(ta); sin(ta); 0]
+v_pf = sqrt(mu/p) * [-sin(ta); e + cos(ta); 0]
 
 % rotation matrix
 R3_W = [cos(W) -sin(W) 0;sin(W)  cos(W) 0;0       0      1];
-
 R1_i = [1 0 0;0 cos(i) -sin(i);0 sin(i)  cos(i)];
-
 R3_w = [cos(w) -sin(w) 0;sin(w)  cos(w) 0;0       0      1];
 
-Q_g2p = R3_W * R1_i * R3_w;
+Q_p2g = R3_W * R1_i * R3_w;
 
-r = Q_g2p * r_pf;
-v = Q_g2p * v_pf;
+r = Q_p2g * r_pf
+v = Q_p2g * v_pf
 
 % Angular momentum direction
-h = cross(r,v);
+h = cross(r,v)
 h_hat = h / norm(h);
 
 % delta v 
 dv_mag = 0.05; 
-v_new = v + dv_mag * h_hat;
+v_new = v + dv_mag * h_hat
 
 % Compute new orbital elements
-
 h_new = cross(r, v_new);
 n = cross([0;0;1], h_new);
 e_vec = (cross(v_new, h_new)/mu) - r/norm(r);
@@ -330,14 +328,14 @@ function [r,v] = oe2rv(a, e, ta, i, W, w)
     h = sqrt(mu * a * (1 - e^2));
     
     r_p = (h^2/mu)/(1+e*cos(ta)) * [cos(ta); sin(ta); 0];
-    v_p = mu/h * [-sin(ta); e+cos(ta); 0]; 
+    v_p = mu/h * [-sin(ta); e+cos(ta); 0];
     
     R3w = [cos(w), sin(w), 0; -sin(w), cos(w), 0; 0, 0, 1]; 
     R3W = [cos(W), sin(W), 0; -sin(W), cos(W), 0; 0, 0, 1]; 
     R1i = [1, 0, 0; 0, cos(i), sin(i); 0, -sin(i), cos(i)]; 
     
     Q_g2p = R3w * R1i * R3W;
-    Q_p2g = Q_g2p';
+    Q_p2g = Q_g2p'
     r = Q_p2g * r_p; 
     v = Q_p2g * v_p; 
 end 
