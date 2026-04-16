@@ -135,12 +135,25 @@ v_s = mu/h_s * [-sin(ta_s); e_s+cos(ta_s); 0];
 
 % Compute the V-infinity vector in the earth's perifocal frame. 
 % Report your answer in km/s to three decimals.
+v_inf_vec = v_s - v_e;
+v_inf = norm(v_inf_vec);
 
+R = [ cos(ta_e)  sin(ta_e)  0;
+     -sin(ta_e)  cos(ta_e)  0;
+      0           0         1];
+
+v_inf_p = R * v_inf_vec;
 % Compute the delta-v magnitude required for the maneuver. 
 % Report your answer in km/s to three decimals.
+mu_E = 398600;
+r_LEO = 6378 + 200;
 
+v_circ = sqrt(mu_E / r_LEO);
+v_peri = sqrt(v_inf^2 + 2*mu_E / r_LEO);
 
-% ta_e, v_e, ta_s, v_s, v_inf % ANSWERS
+delta_v = v_peri - v_circ;
+
+ta_e, v_e, ta_s, v_s, v_inf_p, delta_v % ANSWERS
 
 %% Problem 8 
 % Calculate the propellant mass required to inject a spacecraft 
